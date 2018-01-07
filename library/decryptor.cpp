@@ -1,4 +1,4 @@
-#include "headers\decryptor.h"
+#include "headers/decryptor.h"
 
 decryptor::decryptor(accumulator acc) : tree(acc), ready(true) {}
 

@@ -1,4 +1,4 @@
-#include "headers\encryptor.h"
+#include "headers/encryptor.h"
 #include <algorithm>
 
 encryptor::encryptor(accumulator const &acc) : tree(acc) {}

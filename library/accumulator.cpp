@@ -1,4 +1,4 @@
-#include "headers\accumulator.h"
+#include "headers/accumulator.h"
 
 accumulator::accumulator() {
     memset(cnt, 0, (MAX_NUM + 1) * sizeof(ull));
