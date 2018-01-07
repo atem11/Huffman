@@ -10,13 +10,13 @@ using std::vector;
 struct accumulator {
     accumulator();
 
-    void add_data(vector<symbol> const &a);
+    void add_data(const vector<symbol> &a);
 
     ull get_cnt(size_t ind) const;
 
     void read_accumulator(std::ifstream &reader);
 
-    void del_cnt(vector<symbol> const &a);
+    void del_cnt(const vector<symbol> &a);
 
     bool check();
 

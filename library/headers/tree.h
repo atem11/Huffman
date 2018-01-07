@@ -24,8 +24,9 @@ protected:
     tree();
 
 public:
-    tree(accumulator const &a);
+    tree(const accumulator &a);
 
+    size_t root;
     vector<node> g;
     code_word codes[MAX_NUM + 1];
 

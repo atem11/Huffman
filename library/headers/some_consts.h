@@ -15,4 +15,9 @@ const size_t BLOCK_SIZE = static_cast<size_t>(1e4);
 const size_t MAX_NUM = 255;
 const uint16_t NONE = 555;
 
+template <typename T>
+symbol cast(T s) {
+    return *reinterpret_cast<symbol*>(&s);
+}
+
 #endif //SOME_CONSTS

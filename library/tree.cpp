@@ -1,25 +1,24 @@
-#include "headers/tree.h"
+#include "tree.h"
 #include <set>
 
 using std::set;
 
 tree::tree() {}
 
-tree::tree(accumulator const &a) {
+tree::tree(const accumulator &a) {
     set<pair<ull, two_byte> > lists;
     size_t ind = 0;
     for (two_byte i = 0; i <= MAX_NUM; ++i) {
         ull cnt = a.get_cnt(i);
         if (cnt > 0) {
-            lists.insert({cnt, ind});
+            lists.insert({cnt, ind++});
             g.push_back(node(i));
-            ind++;
         }
     }
     if (lists.size() == 1) {
-        code_word a;
-        a.add_bit(false);
-        codes[g[0].sym] = a;
+        code_word code(0,1);
+        codes[g[0].sym] = code;
+        root = 0;
     } else if (ind) {
         while (lists.size() > 1) {
             ull sum = lists.begin()->first;
@@ -33,7 +32,8 @@ tree::tree(accumulator const &a) {
             g.push_back(node(v1, v2));
             lists.insert({sum, ind++});
         }
-        code_dfs(ind - 1, code_word());
+        root = ind - 1;
+        code_dfs(root, code_word());
     }
 }
 

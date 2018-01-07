@@ -1,4 +1,4 @@
-#include "headers/code_word.h"
+#include "code_word.h"
 
 code_word::code_word() : code(0), len(0) {}
 

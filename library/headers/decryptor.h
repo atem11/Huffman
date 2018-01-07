@@ -10,9 +10,6 @@ struct decryptor : private tree {
     decryptor(accumulator acc);
 
     vector<symbol> decrypt(code const &block) const;
-
-private:
-    bool ready;
 };
 
 #endif //DECRYPTOR

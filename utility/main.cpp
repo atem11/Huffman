@@ -1,6 +1,6 @@
 #include <iostream>
-#include "headers/file_compressor.h"
-#include "headers/file_decompressor.h"
+#include "file_compressor.h"
+#include "file_decompressor.h"
 #include <ctime>
 
 using namespace std;
@@ -54,5 +54,4 @@ int main(int argc, char* argv[]) {
     {
         cerr << "Incorrect mode\nTry -c or -d";
     }
-    return 0;
 }
