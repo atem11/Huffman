@@ -10,68 +10,50 @@ void write_decompressed_block(vector<symbol> const &block, ofstream &writer) {
 }
 
 two_byte read_two_byte(ifstream &reader) {
-    two_byte ans = 0;
-    char k = 0;
-    symbol s;
-    if (reader.fail()) {
-        throw std::runtime_error("");
-    }
-    reader.read(&k, 1);
-    s = static_cast<symbol>(k);
-    ans = (static_cast<two_byte>(s) << 8);
-    if (reader.fail()) {
-        throw std::runtime_error("");
-    }
-    reader.read(&k, 1);
-    s = static_cast<symbol>(k);
-    ans += static_cast<two_byte>(s);
-    return ans;
+    char buf[2];
+    reader.read(buf, sizeof buf);
+    if (reader.fail())
+        throw std::runtime_error("cut block found");
+
+    return static_cast<two_byte>(static_cast<symbol>(buf[0])) << 8 | static_cast<symbol>(buf[1]);
 }
 
 void decompress(string const &src, string const &dst) {
     ifstream check(src);
     if (!check) {
-        throw std::runtime_error("Try another file for decompression, this one is unavailable or doesn't exist\n");
+        throw std::runtime_error("Try another file for adecompression, this one is unavailable or doesn't exist\n");
     }
     check.close();
     ifstream reader(src, ifstream::binary);
     ofstream writer(dst, ofstream::binary);
     accumulator acc;
-
-    try {
-        acc.read_accumulator(reader);
-    }
-    catch (std::runtime_error) {
-        throw std::runtime_error("Incorrect decompressed file: no data for tree\n");
-    }
+    acc.read_accumulator(reader);
 
     decryptor decompressor(acc);
 
-    vector<symbol> cur_block;
-    while (reader.peek() != EOF) {
-        two_byte x, y;
-        try {
-            x = read_two_byte(reader);
-            y = read_two_byte(reader);
-        } catch (std::runtime_error) {
-            throw std::runtime_error("Incorrect decompressed file: cut block found");
-        }
-        cur_block.resize(x);
-        for (two_byte i = 0; i < x; i++) {
-            char s;
-            if (reader.eof()) {
-                throw std::runtime_error("Incorrect decompressed file: cut block found");
+    try {
+        vector<symbol> cur_block;
+        while (reader.peek() != EOF) {
+            two_byte x = read_two_byte(reader);
+            two_byte y = read_two_byte(reader);
+            cur_block.resize(x);
+            for (two_byte i = 0; i < x; i++) {
+                char s;
+                if (reader.eof()) {
+                    throw std::runtime_error("cut block found");
+                }
+                reader.read(&s, 1);
+                cur_block[i] = static_cast<symbol>(s);
             }
-            reader.read(&s, 1);
-            cur_block[i] = static_cast<symbol>(s);
+            vector<symbol> res = decompressor.decrypt(code(cur_block, y));
+            acc.del_cnt(res);
+            write_decompressed_block(res, writer);
         }
-        vector<symbol> res = decompressor.decrypt(code(cur_block, y));
-        acc.del_cnt(res);
-        write_decompressed_block(res, writer);
+        if (!acc.check()) {
+            throw std::runtime_error("data isn't empty");
+        }
     }
-    if (!acc.check()) {
-        throw std::runtime_error("Incorrect decompressed file: data isn't empty");
+    catch (std::runtime_error const& e) {
+        throw std::runtime_error(std::string("incorrect decompressed file: ") + e.what());
     }
-    writer.close();
-    reader.close();
 }

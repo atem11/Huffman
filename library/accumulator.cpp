@@ -35,7 +35,7 @@ void accumulator::read_accumulator(std::ifstream &reader) {
         for (size_t j = 0; j < 8; ++j) {
             reader.read(&k, 1);
             if (reader.fail()) {
-                throw std::runtime_error("");
+                throw std::runtime_error("no data for tree");
             }
             symbol s = cast(k);
             cnt[i] = (cnt[i] << 8) + static_cast<ull>(s);
